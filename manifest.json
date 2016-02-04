@@ -1,0 +1,25 @@
+{
+  "name": "Zapier",
+  "description": "Send Hull events to Zapier",
+  "picture": "picture.png",
+  "version": "0.0.1",
+  "settings": [
+    {
+      "name": "zap_url",
+      "title": "Zap URL",
+      "description": "Zapier Webhook Url",
+      "default": "https://zapier.com/hooks/catch/xxx/",
+      "type": "string",
+      "format": "text"
+    }
+  ],
+  "deployment_settings": [],
+  "resources": [],
+  "readme": "readme.md",
+  "ui": false,
+  "subscriptions": [
+    {
+      "url": "/notify"
+    }
+  ]
+}
