@@ -1,6 +1,7 @@
 {
   "name": "Zapier",
-  "description": "Send Hull events to Zapier",
+  "description": "Notify Zapier whenever a User enters or Leaves a Segment",
+  "tags": ["outgoing"],
   "picture": "picture.png",
   "version": "0.0.1",
   "settings": [
