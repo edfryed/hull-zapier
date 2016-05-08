@@ -1,33 +1,44 @@
 import _ from 'lodash';
-import humanize from './lib/humanize'
-import { resolve, reduce } from './lib/enrichers';
-import f from './lib/formatters';
 import restler from 'restler';
 
-const parse = function(hull, user, segments){
-  user.segments = _.map(segments, (s)=>{ return s.name });
-  const { formatters, formatGroup } = f;
-  const groups = reduce(user, formatters);
-  const promises = resolve(groups, hull, formatGroup, formatters);
-  return Promise.all(promises);
+function error(code='error', err){
+  console.log(`Bad/invalid request - ${code} - Zapier error, or failed request`, err);
 }
 
-export default function(notification={}, context={}){
-  const { hull, ship } = context;
-  const { user, segments } = notification.message;
+export default function({ message={} }, { ship={}, hull={} }){
+  const { user, segments, changes={} } = message;
+  const { settings={}, private_settings={} } = ship;
+  const { synchronized_segments=[], synchronized_properties=[] } = private_settings;
+  const { zap_url='' } = settings;
 
-  if(!user || !user.id || !ship || !ship.settings){ return false; }
+  const log = hull.utils.log;
+  log(changes);
 
-  return parse(hull, user, segments).then((groups)=>{
-    const data = _.reduce(groups, (m, o)=>{
-      m[o.name] = {...m[o.name], ...o.fields}
-      return m;
-    }, {});
-    return restler.post(ship.settings.zap_url, {data});
+  if(!user || !user.id || !ship || !zap_url || !synchronized_segments){
+    return false;
+  }
 
-  }, (err)=>{
-    console.log(err)
-  }).catch((err)=>{
-    console.log(err)
-  });
+  //pluck
+  const segmentArray = _.map(segments, 'name');
+  const segmentIds   = _.map(segments, 'id');
+
+  if ( synchronized_segments.length > 0 && !_.intersection(segmentIds, synchronized_segments).length){
+    log(`Skipping user update for ${user.id} because not matching any segment`);
+    return false;
+  }
+  if (synchronized_properties.length>0 && !_.intersection(_.keys(changes.user||{}), synchronized_properties).length){
+    log(`Skipping user update for ${user.id} because we're filtering changed properties`);
+    return false;
+  }
+
+  const data = { ...user,  segments: segmentArray }
+
+  log(data);
+  // return restler.post(zap_url, {data})
+  //   .on('success', function(data={}, response){
+  //     log('Zap Sent', data, response)
+  //   })
+  //   .on('error', error.bind(undefined, 'error'))
+  //   .on('fail', error.bind(undefined, 'failure'))
+  //   .on('abort', error.bind(undefined,'abort'));
 }

@@ -1,6 +1,6 @@
 {
   "name": "Zapier",
-  "description": "Notify Zapier whenever a User enters or Leaves a Segment",
+  "description": "Send Hull Users updates to Zapier",
   "tags": ["outgoing"],
   "picture": "picture.png",
   "version": "0.0.1",
@@ -12,6 +12,24 @@
       "default": "https://zapier.com/hooks/catch/xxx/",
       "type": "string",
       "format": "text"
+    }
+  ],
+  "private_settings":[
+    {
+      "name": "synchronized_segments",
+      "title": "Filtered Segments",
+      "description": "Only trigger if user matches at least one these segments (Empty to send everyone)",
+      "default": [],
+      "type": "array",
+      "format": "segment"
+    },
+    {
+      "name": "synchronized_properties",
+      "title": "Filtered Properties",
+      "description": "Only trigger if one of these properties changed (Empty to send on any change)",
+      "default": [],
+      "type": "array",
+      "format": "trait"
     }
   ],
   "deployment_settings": [],

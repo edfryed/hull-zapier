@@ -2,14 +2,18 @@ import express       from 'express';
 import bodyParser    from 'body-parser';
 import path          from 'path';
 
-import notificationsHandler  from 'hull/lib/notif-handler';
+import { NotifHandler } from 'hull';
 
 import updateUser    from './update-user';
 import updateSegment from './update-segment';
 
-const handler = notificationsHandler({
+const handler = NotifHandler({
+  groupTraits: true,
+  onError: function(message, status) {
+    console.warn("Error", status, message);
+  },
   events: {
-    'user_report:update' : updateUser,
+    'user_report:update'   : updateUser,
     'users_segment:update' : updateSegment
   }
 });
