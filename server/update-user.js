@@ -33,12 +33,11 @@ export default function({ message={} }, { ship={}, hull={} }){
 
   const data = { ...user,  segments: segmentArray }
 
-  log(data);
-  // return restler.post(zap_url, {data})
-  //   .on('success', function(data={}, response){
-  //     log('Zap Sent', data, response)
-  //   })
-  //   .on('error', error.bind(undefined, 'error'))
-  //   .on('fail', error.bind(undefined, 'failure'))
-  //   .on('abort', error.bind(undefined,'abort'));
+  return restler.post(zap_url, {data})
+    .on('success', function(data={}, response){
+      log('Zap Sent', data, response)
+    })
+    .on('error', error.bind(undefined, 'error'))
+    .on('fail', error.bind(undefined, 'failure'))
+    .on('abort', error.bind(undefined,'abort'));
 }
